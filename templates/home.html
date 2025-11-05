@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center; padding: 4rem 2rem; max-width: 800px; margin: 0 auto;">
+    <h1 style="font-size: 3rem; color: #333; margin-bottom: 1rem;">🎓 Student Task Manager</h1>
+    <p style="font-size: 1.2rem; color: #666; margin-bottom: 3rem;">Your AI-powered productivity companion for academic success</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin: 3rem 0;">
+        <div style="padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+            <h3>AI Assistant</h3>
+            <p>Natural language task management</p>
+        </div>
+        <div style="padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⏱️</div>
+            <h3>Study Timer</h3>
+            <p>Pomodoro technique built-in</p>
+        </div>
+        <div style="padding: 2rem; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
+            <h3>Smart Calendar</h3>
+            <p>Visual deadline planning</p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 3rem;">
+        <a href="/register" style="background: #4CAF50; color: white; padding: 1rem 2rem; text-decoration: none; border-radius: 5px; font-size: 1.1rem; margin: 0 1rem;">
+            Get Started Free
+        </a>
+        <a href="/login" style="background: #f5f5f5; color: #333; padding: 1rem 2rem; text-decoration: none; border-radius: 5px; font-size: 1.1rem; margin: 0 1rem;">
+            Sign In
+        </a>
+    </div>
+</div>
+{% endblock %}

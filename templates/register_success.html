@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 4rem auto; text-align: center; background: white; padding: 3rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+    <h1 style="color: #333; margin-bottom: 1rem;">Welcome to Student Task Manager!</h1>
+    <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem;">
+        Your account has been created successfully. You're now ready to supercharge your productivity!
+    </p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0;">
+        <div style="padding: 1rem; background: #e3f2fd; border-radius: 5px;">
+            <div style="font-size: 2rem;">🤖</div>
+            <strong>AI Assistant</strong>
+        </div>
+        <div style="padding: 1rem; background: #e8f5e8; border-radius: 5px;">
+            <div style="font-size: 2rem;">⏱️</div>
+            <strong>Study Timer</strong>
+        </div>
+        <div style="padding: 1rem; background: #fff3e0; border-radius: 5px;">
+            <div style="font-size: 2rem;">📅</div>
+            <strong>Calendar</strong>
+        </div>
+        <div style="padding: 1rem; background: #f3e5f5; border-radius: 5px;">
+            <div style="font-size: 2rem;">📊</div>
+            <strong>Analytics</strong>
+        </div>
+    </div>
+    
+    <a href="/login" 
+       style="display: inline-block; background: #4CAF50; color: white; text-decoration: none; padding: 1rem 2rem; border-radius: 5px; font-size: 1.1rem; margin: 1rem; transition: all 0.3s ease;">
+        Continue to Login
+    </a>
+    
+    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 5px;">
+        <small style="color: #666;">Pro Tip: Use the AI Assistant to quickly add tasks by saying "Add math homework due Friday"</small>
+    </div>
+</div>
+
+<style>
+    a:hover {
+        background: #45a049 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+</style>
+{% endblock %}

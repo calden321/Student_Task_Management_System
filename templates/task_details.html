@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="task-details">
+        <a href="/dashboard" class="btn" style="background: #666; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px; margin-bottom: 1rem;">
+            ← Back to Dashboard
+        </a>
+        
+        <div class="task-item {{ task.priority }} {{ get_urgency_class(task.due_date) }} {% if task.completed %}completed{% endif %}" style="margin-bottom: 2rem;">
+            <h2>{{ task.title }}
+                {% if not task.completed %}
+                    {% set urgency_class = get_urgency_class(task.due_date) %}
+                    {% if urgency_class == 'urgent-overdue' %}
+                        <span class="urgency-badge overdue-badge">OVERDUE!</span>
+                    {% elif urgency_class == 'urgent-today' %}
+                        <span class="urgency-badge today-badge">DUE TODAY</span>
+                    {% elif urgency_class == 'urgent-tomorrow' %}
+                        <span class="urgency-badge tomorrow-badge">DUE TOMORROW</span>
+                    {% endif %}
+                {% endif %}
+            </h2>
+            
+            <p><strong>Subject:</strong> {{ task.subject_name or "No Subject" }}</p>
+            <p><strong>Due Date:</strong> {{ task.due_date }} | <strong>Priority:</strong> {{ task.priority.upper() }}</p>
+            <p><strong>Status:</strong> {% if task.completed %}✅ Completed{% else %}⏳ Pending{% endif %}</p>
+            
+            {% if task.description %}
+            <p><strong>Description:</strong><br>{{ task.description }}</p>
+            {% endif %}
+        </div>
+
+        <div class="notes-section">
+            <h3>📝 Add Progress Update</h3>
+            <form method="POST" action="/add_note/{{ task.id }}">
+                <textarea name="note_text" placeholder="What's your progress? (e.g., 'Read pages 1-50', 'Stuck on question 3', 'Need help with...')" 
+                         rows="3" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 3px;"></textarea>
+                <button type="submit" class="btn btn-primary">Add Update</button>
+            </form>
+        </div>
+
+        <div class="history-section" style="margin-top: 2rem;">
+            <h3>📋 Progress History</h3>
+            {% if history %}
+                {% for note in history %}
+                <div class="note-item" style="border-left: 3px solid #4CAF50; padding: 1rem; margin: 1rem 0; background: #f9f9f9;">
+                    <p style="margin: 0; white-space: pre-wrap;">{{ note.note_text }}</p>
+                    <small style="color: #666;">{{ note.created_at }}</small>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No progress updates yet. Add your first note above!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

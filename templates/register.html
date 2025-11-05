@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="color: #333; margin-bottom: 0.5rem;">🚀 Get Started</h1>
+        <p style="color: #666;">Create your Student Task Manager account</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background: {% if category == 'error' %}#ffebee{% elif category == 'success' %}#e8f5e8{% else %}#e3f2fd{% endif %}; 
+                            color: {% if category == 'error' %}#c62828{% elif category == 'success' %}#2e7d32{% else %}#1565c0{% endif %}; 
+                            padding: 1rem; border-radius: 5px; margin-bottom: 1rem; 
+                            border-left: 4px solid {% if category == 'error' %}#f44336{% elif category == 'success' %}#4CAF50{% else %}#2196F3{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="registerForm" style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Username *</label>
+            <input type="text" name="username" id="username" required 
+                   value="{{ username if username else '' }}"
+                   style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
+                   placeholder="Choose a username (3-20 characters)"
+                   oninput="validateUsername()">
+            <small id="usernameHelp" style="color: #666; display: block; margin-top: 0.3rem;">
+                Letters, numbers, and underscores only
+            </small>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Email *</label>
+            <input type="email" name="email" id="email" required 
+                   value="{{ email if email else '' }}"
+                   style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
+                   placeholder="your.email@example.com"
+                   oninput="validateEmail()">
+            <small id="emailHelp" style="color: #666; display: block; margin-top: 0.3rem;">
+                We'll never share your email
+            </small>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Password *</label>
+            <input type="password" name="password" id="password" required 
+                   style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
+                   placeholder="Create a password (min. 6 characters)"
+                   oninput="validatePassword()">
+            <small id="passwordHelp" style="color: #666; display: block; margin-top: 0.3rem;">
+                Must contain letters and numbers
+            </small>
+        </div>
+        
+        <button type="submit" id="submitBtn"
+                style="width: 100%; background: #4CAF50; color: white; border: none; padding: 1rem; border-radius: 5px; font-size: 1.1rem; cursor: pointer; transition: background 0.3s ease;">
+            Create Account
+        </button>
+    </form>
+
+    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid #eee;">
+        <p style="color: #666; margin-bottom: 1rem;">Already have an account?</p>
+        <a href="/login" 
+           style="display: block; background: #f5f5f5; color: #333; text-decoration: none; padding: 0.8rem; border-radius: 5px; border: 1px solid #ddd; transition: all 0.3s ease;">
+            Sign In Instead
+        </a>
+    </div>
+
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #e8f5e8; border-radius: 5px; border-left: 4px solid #4CAF50;">
+        <h4 style="margin: 0 0 0.5rem 0; color: #2e7d32;">🎯 What You'll Get:</h4>
+        <ul style="margin: 0; padding-left: 1.2rem; color: #388e3c;">
+            <li>AI-Powered Task Assistant</li>
+            <li>Smart Study Timer</li>
+            <li>Visual Calendar Planning</li>
+            <li>Progress Tracking</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+function validateUsername() {
+    const username = document.getElementById('username').value;
+    const helpText = document.getElementById('usernameHelp');
+    
+    if (username.length < 3) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Username must be at least 3 characters';
+        return false;
+    } else if (username.length > 20) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Username must be less than 20 characters';
+        return false;
+    } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Only letters, numbers, and underscores allowed';
+        return false;
+    } else {
+        helpText.style.color = '#4CAF50';
+        helpText.textContent = '✓ Username format is valid';
+        return true;
+    }
+}
+
+function validateEmail() {
+    const email = document.getElementById('email').value;
+    const helpText = document.getElementById('emailHelp');
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (email && !emailPattern.test(email)) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Please enter a valid email address';
+        return false;
+    } else if (email.length > 100) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Email must be less than 100 characters';
+        return false;
+    } else {
+        helpText.style.color = '#666';
+        helpText.textContent = 'We\'ll never share your email';
+        return true;
+    }
+}
+
+function validatePassword() {
+    const password = document.getElementById('password').value;
+    const helpText = document.getElementById('passwordHelp');
+    
+    if (password.length < 6) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Password must be at least 6 characters';
+        return false;
+    } else if (!/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
+        helpText.style.color = '#f44336';
+        helpText.textContent = 'Must contain at least one letter and one number';
+        return false;
+    } else {
+        helpText.style.color = '#4CAF50';
+        helpText.textContent = '✓ Password strength is good';
+        return true;
+    }
+}
+
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const isUsernameValid = validateUsername();
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
+    
+    if (!isUsernameValid || !isEmailValid || !isPasswordValid) {
+        e.preventDefault();
+        alert('Please fix the validation errors before submitting.');
+    }
+});
+</script>
+
+<style>
+input:focus {
+    border-color: #4CAF50 !important;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    outline: none;
+}
+
+button:hover {
+    background: #45a049 !important;
+    transform: translateY(-1px);
+}
+
+a:hover {
+    background: #e0e0e0 !important;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+.input-error {
+    border-color: #f44336 !important;
+    box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2) !important;
+}
+</style>
+{% endblock %}

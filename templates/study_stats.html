@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <a href="/study_timer" class="btn" style="background: #666; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px;">
+            ← Back to Timer
+        </a>
+        <a href="/dashboard" class="btn" style="background: #4CAF50; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px; margin-left: 1rem;">
+            📚 Back to Tasks
+        </a>
+    </div>
+
+    <h1>📈 Study Statistics</h1>
+    
+    <!-- Overall Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
+        <div style="background: #e8f5e8; padding: 2rem; border-radius: 10px; text-align: center;">
+            <h3>⏱️ Total Study Time</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0;">
+                {{ (total_stats.total_minutes or 0) // 60 }}h {{ (total_stats.total_minutes or 0) % 60 }}m
+            </p>
+            <p>{{ total_stats.total_sessions or 0 }} sessions</p>
+        </div>
+        
+        <div style="background: #e3f2fd; padding: 2rem; border-radius: 10px; text-align: center;">
+            <h3>📅 Days Studied</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0;">
+                {{ (weekly_stats|length if weekly_stats else 0) }} days
+            </p>
+            <p>This week</p>
+        </div>
+        
+        <div style="background: #fff3e0; padding: 2rem; border-radius: 10px; text-align: center;">
+            <h3>📊 Average Session</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0.5rem 0;">
+                {{ (total_stats.avg_duration or 0)|round|int }} min
+            </p>
+            <p>Per session</p>
+        </div>
+    </div>
+
+    <!-- Subject Breakdown -->
+    <div style="background: white; padding: 2rem; border-radius: 10px; margin: 2rem 0;">
+        <h2>📚 Study Time by Subject</h2>
+        {% if subject_stats %}
+            {% for subject in subject_stats %}
+            <div style="margin: 1rem 0; padding: 1rem; background: #f5f5f5; border-radius: 5px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1;">
+                        <strong>{{ subject.name or 'No Subject - General Studying' }}</strong>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-weight: bold;">{{ subject.total_minutes }}min</span>
+                        <small style="color: #666;"> ({{ subject.session_count }} sessions)</small>
+                    </div>
+                </div>
+                <div style="margin-top: 0.5rem; height: 10px; background: #ddd; border-radius: 5px; overflow: hidden;">
+                    <div style="height: 100%; background: #4CAF50; width: {{ (subject.total_minutes / (total_stats.total_minutes or 1)) * 100 }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No study data yet. Start using the timer!</p>
+        {% endif %}
+    </div>
+
+    <!-- Study Tips -->
+    <div style="background: #fff3cd; padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
+        <h3>💡 Study Tips</h3>
+        <ul>
+            <li><strong>Select a subject</strong> when starting your timer to track time per course</li>
+            <li><strong>Pomodoro Technique:</strong> 25min focus + 5min break = maximum productivity</li>
+            <li><strong>Consistency:</strong> Regular short sessions beat occasional long marathons</li>
+            <li><strong>Take breaks:</strong> Your brain needs rest to absorb information</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="study-timer-section">
+        <h1>🎯 Study Timer</h1>
+        <p>Use the Pomodoro technique: 25 minutes focus, 5 minutes break</p>
+        
+        <!-- Session Counting Guide -->
+        <div style="background: #fff3cd; padding: 1rem; border-radius: 5px; margin: 1rem 0; border-left: 4px solid #ff9800;">
+            <h3>💡 How Sessions Get Counted:</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 0.5rem;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;">💾</div>
+                    <strong>Save Session</strong>
+                    <p style="margin: 0.2rem 0; font-size: 0.9em;">Timer finishes → Click "Save"<br>✅ <strong>Counted in stats</strong></p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;">🔄</div>
+                    <strong>Reset</strong>
+                    <p style="margin: 0.2rem 0; font-size: 0.9em;">Stop during session<br>❌ <strong>Not counted</strong></p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem;">⏭️</div>
+                    <strong>Skip Saving</strong>
+                    <p style="margin: 0.2rem 0; font-size: 0.9em;">Timer finishes → Click "Skip"<br>❌ <strong>Not counted</strong></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Subject Selection -->
+        <div style="background: #f0f8ff; padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+            <label><strong>📚 Select Subject (optional):</strong></label>
+            <select id="subject-select" style="padding: 0.5rem; margin-left: 0.5rem; font-size: 1rem;">
+                <option value="">No Subject - General Studying</option>
+                {% for subject in subjects %}
+                <option value="{{ subject.id }}">{{ subject.name }}</option>
+                {% endfor %}
+            </select>
+            <small style="display: block; margin-top: 0.5rem; color: #666;">
+                Choose a subject to track your study time per course
+            </small>
+        </div>
+
+        <!-- Timer Display -->
+        <div id="timer-container" style="text-align: center; margin: 2rem 0; padding: 2rem; background: #f0f8ff; border-radius: 10px;">
+            <div id="timer-display" style="font-size: 4rem; font-weight: bold; margin: 1rem 0;">25:00</div>
+            <div id="timer-status" style="font-size: 1.5rem; margin: 1rem 0; min-height: 3rem;">
+                <span id="status-main">Ready to focus! 🎯</span>
+                <br>
+                <small id="status-help">Timer will count down automatically</small>
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 1rem; margin: 1rem 0;">
+                <button id="start-btn" class="btn" style="background: #4CAF50; color: white; padding: 1rem 2rem; font-size: 1.2rem;">
+                    ▶ Start Focus Session (25min)
+                </button>
+                <button id="break-btn" class="btn" style="background: #2196F3; color: white; padding: 1rem 2rem; font-size: 1.2rem;">
+                    ☕ Start Break (5min)
+                </button>
+                <button id="reset-btn" class="btn" style="background: #ff9800; color: white; padding: 1rem 2rem; font-size: 1.2rem;">
+                    🔄 Reset/Cancel
+                </button>
+            </div>
+            
+            <!-- Session Notes -->
+            <div style="margin-top: 1rem;">
+                <label><strong>📝 Session Notes (optional):</strong></label><br>
+                <textarea id="session-notes" placeholder="What will you work on? (e.g., 'Math chapter 5', 'Essay outline')" 
+                         rows="2" style="width: 80%; padding: 0.5rem; margin: 0.5rem 0;"></textarea>
+            </div>
+            
+            <!-- Session Complete Form -->
+            <div id="session-form" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #e8f5e8; border-radius: 5px; border: 2px solid #4CAF50;">
+                <h3 style="color: #2E7D32; margin-top: 0;">🎉 Session Complete!</h3>
+                <div style="background: white; padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+                    <p style="margin: 0.5rem 0;"><strong>Session Summary:</strong></p>
+                    <p style="margin: 0.5rem 0;">Type: <strong><span id="completed-type">focus</span> session</strong></p>
+                    <p style="margin: 0.5rem 0;">Duration: <strong><span id="completed-duration">25</span> minutes</strong></p>
+                    <p style="margin: 0.5rem 0;">Subject: <strong><span id="completed-subject">General Studying</span></strong></p>
+                </div>
+                
+                <form method="POST" action="/save_study_session" id="save-session-form">
+                    <input type="hidden" name="duration" id="session-duration">
+                    <input type="hidden" name="session_type" id="session-type">
+                    <input type="hidden" name="subject_id" id="form-subject-id">
+                    <input type="hidden" name="notes" id="form-notes">
+                    
+                    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+                        <button type="submit" class="btn" style="background: #4CAF50; color: white; padding: 1rem 2rem; font-size: 1.1rem; border: 2px solid #2E7D32;">
+                            💾 Save This Session (Counts in Stats)
+                        </button>
+                        <button type="button" id="skip-save" class="btn" style="background: #666; color: white; padding: 1rem 2rem; font-size: 1.1rem;">
+                            ⏭️ Skip Saving (Not Counted)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 2rem 0;">
+            <div style="background: #e8f5e8; padding: 1rem; border-radius: 5px; text-align: center;">
+                <h3>📊 This Week</h3>
+                <p style="font-size: 1.5rem; font-weight: bold;">
+                    {{ weekly_stats|sum(attribute='total_minutes')|default(0) }} min
+                </p>
+                <small>Total study time</small>
+            </div>
+            <div style="background: #e3f2fd; padding: 1rem; border-radius: 5px; text-align: center;">
+                <h3>🔥 Streak</h3>
+                <p style="font-size: 1.5rem; font-weight: bold;">
+                    {{ (weekly_stats|length if weekly_stats else 0) }} days
+                </p>
+                <small>Days studied this week</small>
+            </div>
+            <div style="background: #fff3e0; padding: 1rem; border-radius: 5px; text-align: center;">
+                <h3>⏱️ Sessions</h3>
+                <p style="font-size: 1.5rem; font-weight: bold;">
+                    {{ recent_sessions|length }}
+                </p>
+                <small>Saved sessions</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <div class="recent-sessions" style="margin-top: 2rem;">
+        <h2>📋 Recent Study Sessions</h2>
+        {% if recent_sessions %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                {% for session in recent_sessions %}
+                <div class="session-item" style="border-left: 4px solid {% if session.session_type == 'focus' %}#4CAF50{% else %}#2196F3{% endif %}; padding: 1rem; background: #fafafa; border-radius: 5px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-size: 2rem; margin-right: 0.5rem;">
+                            {% if session.session_type == 'focus' %}🎯{% else %}☕{% endif %}
+                        </span>
+                        <div>
+                            <strong>{{ session.duration_minutes }}min {{ session.session_type.title() }}</strong>
+                            <br>
+                            <small style="color: #666;">{{ session.created_at[:16] }}</small>
+                        </div>
+                    </div>
+                    {% if session.subject_name %}
+                    <p style="margin: 0.5rem 0; color: #444;">
+                        <strong>Subject:</strong> 📚 {{ session.subject_name }}
+                    </p>
+                    {% endif %}
+                    {% if session.notes %}
+                    <p style="margin: 0.5rem 0; font-style: italic; background: white; padding: 0.5rem; border-radius: 3px;">
+                        "{{ session.notes }}"
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="text-align: center; padding: 2rem; background: #f9f9f9; border-radius: 5px;">
+                No study sessions yet. Complete a timer and click "Save Session"!
+            </p>
+        {% endif %}
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/study_stats" class="btn" style="background: #666; color: white; text-decoration: none; padding: 0.8rem 1.5rem;">
+                📈 View Detailed Statistics
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Timer JavaScript -->
+<script>
+    let timer;
+    let timeLeft = 25 * 60; // 25 minutes in seconds
+    let isRunning = false;
+    let currentSessionType = 'focus';
+
+    function updateDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer-display').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function updateStatus(mainText, helpText = '') {
+        document.getElementById('status-main').textContent = mainText;
+        document.getElementById('status-help').textContent = helpText;
+    }
+
+    function startTimer(duration, sessionType) {
+        if (isRunning) return;
+        
+        timeLeft = duration * 60;
+        currentSessionType = sessionType;
+        isRunning = true;
+        
+        const statusText = sessionType === 'focus' ? 'Focus time! 🎯' : 'Break time! ☕';
+        const helpText = sessionType === 'focus' ? 'Stay focused! Timer will auto-complete' : 'Relax! Timer will notify when break ends';
+        
+        updateStatus(statusText, helpText);
+        
+        // Disable subject selection and notes while timer is running
+        document.getElementById('subject-select').disabled = true;
+        document.getElementById('session-notes').disabled = true;
+        
+        timer = setInterval(() => {
+            timeLeft--;
+            updateDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                isRunning = false;
+                
+                // Show completion summary
+                const subjectSelect = document.getElementById('subject-select');
+                const subjectText = subjectSelect.options[subjectSelect.selectedIndex].text;
+                
+                document.getElementById('completed-type').textContent = sessionType;
+                document.getElementById('completed-duration').textContent = duration;
+                document.getElementById('completed-subject').textContent = subjectText;
+                
+                document.getElementById('session-form').style.display = 'block';
+                document.getElementById('session-duration').value = duration;
+                document.getElementById('session-type').value = sessionType;
+                
+                // Re-enable form elements
+                document.getElementById('subject-select').disabled = false;
+                document.getElementById('session-notes').disabled = false;
+                
+                updateStatus('🎉 Session Complete!', 'Click "Save Session" to count this in your statistics');
+                
+                // Play completion sound (optional)
+                const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA');
+                audio.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }, 1000);
+    }
+
+    function resetTimer() {
+        clearInterval(timer);
+        isRunning = false;
+        timeLeft = 25 * 60;
+        currentSessionType = 'focus';
+        updateDisplay();
+        updateStatus('Ready to focus! 🎯', 'Timer was reset. Session will not be counted.');
+        document.getElementById('session-form').style.display = 'none';
+        
+        // Re-enable form elements
+        document.getElementById('subject-select').disabled = false;
+        document.getElementById('session-notes').disabled = false;
+    }
+
+    // Set up form submission
+    document.getElementById('save-session-form').addEventListener('submit', function(e) {
+        // Copy values from visible fields to hidden form fields
+        document.getElementById('form-subject-id').value = document.getElementById('subject-select').value;
+        document.getElementById('form-notes').value = document.getElementById('session-notes').value;
+        
+        updateStatus('💾 Saving session...', 'Redirecting to update statistics');
+    });
+
+    document.getElementById('skip-save').addEventListener('click', function() {
+        document.getElementById('session-form').style.display = 'none';
+        document.getElementById('session-notes').value = ''; // Clear notes for next session
+        updateStatus('Ready to focus! 🎯', 'Session was not saved. Start a new timer when ready.');
+    });
+
+    document.getElementById('start-btn').addEventListener('click', () => startTimer(25, 'focus'));
+    document.getElementById('break-btn').addEventListener('click', () => startTimer(5, 'break'));
+    document.getElementById('reset-btn').addEventListener('click', resetTimer);
+
+    // Initialize display
+    updateDisplay();
+</script>
+{% endblock %}

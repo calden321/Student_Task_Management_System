@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="task-list">
+        <h2>Your Tasks</h2>
+        
+        <div class="stats">
+            <p><strong>📊 Summary:</strong> {{ total_tasks }} total tasks | {{ completed_tasks }} completed | {{ pending_tasks }} pending</p>
+        </div>
+        
+        {% if tasks %}
+            {% for task in tasks %}
+            <div class="task-item {{ task.priority }} {% if task.completed %}completed{% endif %}">
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description }}</p>
+                <p>📅 Due: {{ task.due_date }} | 
+                   <span class="priority-badge {{ task.priority }}-badge">{{ task.priority.upper() }}</span> |
+                   Status: {% if task.completed %}✅ Completed{% else %}⏳ Pending{% endif %}
+                </p>
+                <div>
+                    {% if not task.completed %}
+                    <form method="POST" action="/complete_task" style="display:inline;">
+                        <input type="hidden" name="task_id" value="{{ task.id }}">
+                        <button type="submit" class="btn btn-success">Mark Complete</button>
+                    </form>
+                    {% endif %}
+                    <form method="POST" action="/delete_task" style="display:inline;">
+                        <input type="hidden" name="task_id" value="{{ task.id }}">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No tasks yet. Add your first task below!</p>
+        {% endif %}
+    </div>
+    
+    <div class="task-form">
+        <h2>Add New Task</h2>
+        <form method="POST">
+            <input type="text" name="title" placeholder="Task title" required>
+            <textarea name="description" placeholder="Description" rows="3"></textarea>
+            <input type="date" name="due_date" required>
+            <select name="priority" required>
+                <option value="high">High Priority</option>
+                <option value="medium" selected>Medium Priority</option>
+                <option value="low">Low Priority</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Add Task</button>
+        </form>
+        
+        <div style="margin-top: 2rem;">
+            <h3>Quick Tips:</h3>
+            <ul>
+                <li>High priority = Red border</li>
+                <li>Medium priority = Orange border</li>
+                <li>Low priority = Green border</li>
+                <li>Grey background = Completed</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "studenttaskbot-yoce",
+  "private_key_id": "dfc033f5941e1ebd6f9c9578292e5e2fdd510dbc",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCbxe/Kgw3u6IWy\nTjQ5MdATK0ybyM7Kd0aROessR3rZ7b4h2nWSWWcm/TudqFtFM6NVHMXzq/LrIK3i\nSFJWxIvrRchmjcSEAlBjmtdEkYdBWHuCu29Y883Tp4w84MQHQwtDyORjkyOgypVV\nMqkwLxD50AqE2SCDHk7VwSAofGH9tI6dIXAI4cq1G/IkSSelTmRqAFPKR6+ghNIA\nvzmGIXI2ywkbsxbrf7swxaQZS0DdLLrOOwZWcWnTcTiKkApi8TwwtVbpkjDaHa9S\neL+7W8Eie0gMUPO0NpR2t7q620SrpZIOQvmsfvl916CAtFWoTcxw2Vx4W7GxBjcB\nvsp53XmXAgMBAAECggEAHgwYvH36Fo7olyPJpAytP71W6ifaZ6iJRqMe72wcUOQw\njDQpAKFZKean9LnQXTFgPJ8vudh9o4gqsl7T7yO7f5b22H1ZHkOaARSRmIrfxaWN\nMYL5L/XbSovjm6yZc3MlvZ4HHAP6V94r3wLGKuKxShasqMJ/KHuUplu52cVgW4EG\n+yFnXFvO8GupDkpCCuBOJ9O9sUq1hymJGVg4SIN+L5NiQglhu0J2GJZAj8Xdq1xw\nqZBDSSdaT/izvRtwnvumVv8KSUPqVePkYUr/8Q9ylqdVJ872RUtILO3KivDL/yCV\nZgIHuad92QpUQRyk5/T+TI+SpPD8ZDs0QvJHf/KtOQKBgQDOLDFIMtKtFSMxQpI4\nHVs5St36z7DWlFz9JTuNxNftOwUmzKwDMZVGjfplKya7entkDfgHoLnvt+8ateQs\nryHu0wkrx7QXHgYHggNH5lShEcmbOTjdYnUn3dtKnGci/lGUFuKPrxSG50DxUfn4\nz1rbupJjhkc71t7mxS62BfRW2QKBgQDBa43B4N6ZV5+zgc+NybzQk+mLNdCJKSx0\nF3XTseaxFABpfoh5V3kVq0MGrFGr2OTqxh2dd6UzjBeSsQ6Igk0iR4p3Ku+TLCAI\nq4Dvdlj+/mD6zBruSd3oUzL67FDlgOLcU/RUu6WmkkBZbo94oSPSB/DnDcUsANxn\n7+HqEDZt7wKBgQC8lxgNXs/vmyIx8R8nTVMguScMQecUoWnd9azgJWsOiapQr2+5\nDCXr//tHh41KeONdxplXAOKUML/6wt8RMLHtcAU3ktldPA1v2LF/l2VaYJb18gXe\nHC3mZb4uJZsCG3gr6jMcE57HN8nj9ISf36zQyX0WpMGMLyR+G2h7AD9dIQKBgHvZ\nTo/SWTZ+8PeUKz5y6r/zths5fioVfy1myD+hLkI8uHbUWra32ASUAPsI49LRsuLR\nsKzfq5xyG7YGQXQPWyyT+omLqJPoMSrcBldOxHWilJ6CiswB6GGWxJH/N119RcYm\ny9Blxw/9nc6mCKAJLlKSWyLXomUmt/qlk1a4wuFpAoGASQiu6TzLyfTWLGdI2GjO\nwlxT86alvsX4tqEq3XRzY7U1cGinyZSMrKEm9+XY49C5Hyi26SwVrrZisml0AT/2\nc/Z4ughGTRUHyXnxrJB4K6mT2tZ9JWVZ9LUxj2+V05lb7FBOOZ4HLsd/7+EBsvjx\n+rW0nkX66FsuKRJyaxuO+1I=\n-----END PRIVATE KEY-----\n",
+  "client_email": "dialogflow-client@studenttaskbot-yoce.iam.gserviceaccount.com",
+  "client_id": "102321711364517289176",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dialogflow-client%40studenttaskbot-yoce.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <a href="/calendar" class="btn" style="background: #666; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px;">
+            ← Back to Calendar
+        </a>
+        <a href="/dashboard" class="btn" style="background: #4CAF50; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px; margin-left: 1rem;">
+            📋 All Tasks
+        </a>
+    </div>
+
+    <h1>📅 Tasks for {{ date }}</h1>
+    
+    {% set today = datetime.now().strftime('%Y-%m-%d') %}
+    {% if date < today %}
+    <div style="background: #ffebee; padding: 1rem; border-radius: 5px; margin: 1rem 0; border-left: 4px solid #ff4444;">
+        <strong>🚨 Overdue!</strong> These tasks were due on {{ date }}
+    </div>
+    {% elif date == today %}
+    <div style="background: #fff3e0; padding: 1rem; border-radius: 5px; margin: 1rem 0; border-left: 4px solid #ff9800;">
+        <strong>📌 Due Today!</strong> Complete these tasks today
+    </div>
+    {% endif %}
+
+    {% if tasks %}
+        {% for task in tasks %}
+        <div class="task-item {{ task.priority }} {{ get_urgency_class(task.due_date) }} {% if task.completed %}completed{% endif %}" style="margin-bottom: 1rem;">
+            <h3>{{ task.title }}
+                {% if not task.completed %}
+                    {% set urgency_class = get_urgency_class(task.due_date) %}
+                    {% if urgency_class == 'urgent-overdue' %}
+                        <span class="urgency-badge overdue-badge">OVERDUE!</span>
+                    {% elif urgency_class == 'urgent-today' %}
+                        <span class="urgency-badge today-badge">DUE TODAY</span>
+                    {% endif %}
+                {% endif %}
+            </h3>
+            
+            <p>{{ task.description }}</p>
+            <p>
+                <span class="priority-badge {{ task.priority }}-badge">{{ task.priority.upper() }}</span> |
+                {% if task.subject_name %}
+                <span style="color: {{ task.subject_color }};">📚 {{ task.subject_name }}</span> |
+                {% endif %}
+                Status: {% if task.completed %}✅ Completed{% else %}⏳ Pending{% endif %}
+            </p>
+            
+            <!-- Reschedule Form -->
+            <form method="POST" action="/update_task_date/{{ task.id }}" style="margin-top: 0.5rem;">
+                <label><strong>Reschedule:</strong></label>
+                <input type="date" name="new_date" value="{{ task.due_date }}" style="padding: 0.3rem; margin: 0 0.5rem;">
+                <button type="submit" class="btn" style="background: #2196F3; color: white; padding: 0.3rem 0.8rem; font-size: 0.9rem;">
+                    Move Task
+                </button>
+            </form>
+            
+            <div style="margin-top: 0.5rem;">
+                {% if not task.completed %}
+                <form method="POST" action="/complete_task" style="display:inline;">
+                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                    <button type="submit" class="btn btn-success">Mark Complete</button>
+                </form>
+                {% endif %}
+                <a href="/task_details/{{ task.id }}" class="btn" style="background: #2196F3; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px;">
+                    📝 Add Note
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 3rem; background: #f9f9f9; border-radius: 5px;">
+            <h3>No tasks due on {{ date }}</h3>
+            <p>🎉 You're all caught up for this day!</p>
+            <a href="/dashboard" class="btn" style="background: #4CAF50; color: white; text-decoration: none; padding: 0.8rem 1.5rem; margin-top: 1rem;">
+                Add New Task
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Override container styling for full-width chat -->
+<div style="max-width: 100%; padding: 0; margin: 0;">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="/dashboard" class="btn" style="background: #666; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px;">
+                📋 Back to Tasks
+            </a>
+            <a href="/calendar" class="btn" style="background: #4CAF50; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px; margin-left: 1rem;">
+                📅 Calendar
+            </a>
+        </div>
+
+        <!-- Main Chat Container - Centered properly -->
+        <div style="background: white; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden;">
+            <!-- Chatbot Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; text-align: center;">
+                <h1 style="margin: 0; font-size: 2.5rem;">🤖 AI Study Assistant</h1>
+                <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-size: 1.1rem;">Powered by Dialogflow - I understand natural language!</p>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chat-container" style="height: 400px; overflow-y: auto; padding: 1.5rem; background: #f8f9fa;">
+                <div class="message bot-message" style="background: white; padding: 1.2rem; margin: 0.5rem 0; border-radius: 18px; border-bottom-left-radius: 8px; max-width: 85%; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <strong>AI Assistant:</strong> Hello! I'm your AI study assistant. I can understand natural language - try asking about your tasks in different ways!
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div style="background: white; padding: 1.5rem; border-top: 1px solid #e9ecef;">
+                <div style="display: flex; gap: 0.8rem; align-items: center;">
+                    <input type="text" id="user-input" placeholder="Ask me anything about your tasks, deadlines, or studying..." 
+                           style="flex: 1; padding: 1rem; border: 2px solid #e9ecef; border-radius: 30px; outline: none; font-size: 1rem; transition: all 0.3s ease;">
+                    <button id="send-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 1rem 2rem; border-radius: 30px; cursor: pointer; font-size: 1rem; font-weight: bold; transition: all 0.3s ease;">
+                        Send
+                    </button>
+                </div>
+                
+               
+            </div>
+        </div>
+
+        <!-- AI Capabilities -->
+        <div style="max-width: 1000px; margin: 2rem auto; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); padding: 2rem; border-radius: 15px; border-left: 5px solid #2196F3;">
+            <h3 style="margin: 0 0 1rem 0; color: #1565c0; font-size: 1.5rem;">🚀 AI-Powered Features:</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <strong style="color: #667eea; font-size: 1.1rem;">🎯 Natural Language Understanding</strong>
+                    <ul style="margin: 1rem 0 0 0; padding-left: 1.2rem;">
+                        <li style="margin: 0.5rem 0;">Understands different ways of asking</li>
+                        <li style="margin: 0.5rem 0;">Handles typos and variations</li>
+                        <li style="margin: 0.5rem 0;">Context-aware responses</li>
+                    </ul>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <strong style="color: #667eea; font-size: 1.1rem;">💬 Smart Conversations</strong>
+                    <ul style="margin: 1rem 0 0 0; padding-left: 1.2rem;">
+                        <li style="margin: 0.5rem 0;">Remembers conversation context</li>
+                        <li style="margin: 0.5rem 0;">Provides relevant follow-ups</li>
+                        <li style="margin: 0.5rem 0;">Adapts to your language style</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addMessage(message, isUser = false) {
+        const chatContainer = document.getElementById('chat-container');
+        const messageDiv = document.createElement('div');
+        
+        if (isUser) {
+            messageDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            messageDiv.style.color = 'white';
+            messageDiv.style.marginLeft = 'auto';
+            messageDiv.style.borderBottomRightRadius = '8px';
+            messageDiv.style.borderBottomLeftRadius = '18px';
+            messageDiv.innerHTML = `<strong>You:</strong> ${message}`;
+        } else {
+            messageDiv.style.background = 'white';
+            messageDiv.style.borderBottomLeftRadius = '8px';
+            messageDiv.style.borderBottomRightRadius = '18px';
+            messageDiv.innerHTML = `<strong>AI Assistant:</strong> ${message}`;
+        }
+        
+        messageDiv.style.padding = '1.2rem';
+        messageDiv.style.margin = '0.8rem 0';
+        messageDiv.style.borderRadius = '18px';
+        messageDiv.style.maxWidth = '85%';
+        messageDiv.style.wordWrap = 'break-word';
+        messageDiv.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        messageDiv.style.transition = 'all 0.3s ease';
+        
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        
+        // Add hover effect
+        messageDiv.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15)';
+        });
+        
+        messageDiv.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        });
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        addMessage(message, true);
+        input.value = '';
+        
+        // Show typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.id = 'typing-indicator';
+        typingIndicator.innerHTML = '<em>AI Assistant is typing...</em>';
+        typingIndicator.style.color = '#666';
+        typingIndicator.style.fontStyle = 'italic';
+        typingIndicator.style.padding = '1rem';
+        typingIndicator.style.textAlign = 'center';
+        typingIndicator.style.background = '#f8f9fa';
+        typingIndicator.style.borderRadius = '10px';
+        typingIndicator.style.margin = '0.5rem 0';
+        document.getElementById('chat-container').appendChild(typingIndicator);
+        document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
+        
+        try {
+            const response = await fetch('/send_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            });
+            
+            // Remove typing indicator
+            document.getElementById('typing-indicator')?.remove();
+            
+            const data = await response.json();
+            addMessage(data.response);
+        } catch (error) {
+            // Remove typing indicator
+            document.getElementById('typing-indicator')?.remove();
+            addMessage('Sorry, I encountered an error. Please try again.');
+        }
+    }
+
+    // Event listeners
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('user-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    // Quick suggestions
+    document.querySelectorAll('.suggestion-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('user-input').value = this.dataset.message;
+            sendMessage();
+        });
+    });
+
+    // Input focus effects
+    const userInput = document.getElementById('user-input');
+    userInput.addEventListener('focus', function() {
+        this.style.borderColor = '#667eea';
+        this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+    });
+    
+    userInput.addEventListener('blur', function() {
+        this.style.borderColor = '#e9ecef';
+        this.style.boxShadow = 'none';
+    });
+
+    // Button hover effects
+    document.getElementById('send-btn').addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
+    });
+    
+    document.getElementById('send-btn').addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = 'none';
+    });
+
+    // Suggestion button hover effects
+    document.querySelectorAll('.suggestion-btn').forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        });
+        
+        btn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+
+    // Auto-focus input
+    userInput.focus();
+</script>
+
+<style>
+    /* Smooth scrolling */
+    #chat-container {
+        scroll-behavior: smooth;
+    }
+    
+    /* Custom scrollbar */
+    #chat-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    #chat-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    #chat-container::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+    
+    #chat-container::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+{% endblock %}

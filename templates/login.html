@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="color: #333; margin-bottom: 0.5rem;">🔐 Login</h1>
+        <p style="color: #666;">Welcome back to your Student Task Manager</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div style="background: {% if category == 'error' %}#ffebee{% elif category == 'success' %}#e8f5e8{% else %}#e3f2fd{% endif %}; 
+                            color: {% if category == 'error' %}#c62828{% elif category == 'success' %}#2e7d32{% else %}#1565c0{% endif %}; 
+                            padding: 1rem; border-radius: 5px; margin-bottom: 1rem; 
+                            border-left: 4px solid {% if category == 'error' %}#f44336{% elif category == 'success' %}#4CAF50{% else %}#2196F3{% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" id="loginForm" style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Username *</label>
+            <input type="text" name="username" id="username" required 
+                   style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
+                   placeholder="Enter your username"
+                   oninput="validateLoginForm()">
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Password *</label>
+            <input type="password" name="password" id="password" required 
+                   style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;"
+                   placeholder="Enter your password"
+                   oninput="validateLoginForm()">
+        </div>
+        
+        <button type="submit" id="submitBtn"
+                style="width: 100%; background: #4CAF50; color: white; border: none; padding: 1rem; border-radius: 5px; font-size: 1.1rem; cursor: pointer; transition: background 0.3s ease;">
+            Login to Your Account
+        </button>
+    </form>
+
+    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid #eee;">
+        <p style="color: #666; margin-bottom: 1rem;">Don't have an account?</p>
+        <a href="/register" 
+           style="display: block; background: #f5f5f5; color: #333; text-decoration: none; padding: 0.8rem; border-radius: 5px; border: 1px solid #ddd; transition: all 0.3s ease;">
+            Create New Account
+        </a>
+    </div>
+
+    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 5px; text-align: center;">
+        <small style="color: #666;">Demo Features: AI Assistant • Study Timer • Calendar View • Task Management</small>
+    </div>
+</div>
+
+<script>
+function validateLoginForm() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Basic validation - enable/disable submit button
+    if (username.length >= 3 && password.length >= 1) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+    } else {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
+    }
+}
+
+// Initialize form validation on page load
+document.addEventListener('DOMContentLoaded', function() {
+    validateLoginForm();
+});
+
+// Add basic protection against rapid form submission
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Logging in...';
+    submitBtn.style.background = '#999';
+});
+</script>
+
+<style>
+input:focus {
+    border-color: #4CAF50 !important;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    outline: none;
+}
+
+button:hover:not(:disabled) {
+    background: #45a049 !important;
+    transform: translateY(-1px);
+}
+
+a:hover {
+    background: #e0e0e0 !important;
+    text-decoration: none;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+</style>
+{% endblock %}

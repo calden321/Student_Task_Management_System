@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Remove the container div and use full width -->
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <a href="/dashboard" class="btn" style="background: #666; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px;">
+            📋 Back to Tasks
+        </a>
+        <a href="/study_timer" class="btn" style="background: #4CAF50; color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 3px; margin-left: 1rem;">
+            ⏱️ Study Timer
+        </a>
+    </div>
+
+    <!-- Calendar Header - Better spacing -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <a href="/calendar?year={{ prev_year }}&month={{ prev_month }}" class="btn" style="background: #2196F3; color: white; text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 6px; font-weight: bold;">
+            ← {{ prev_month_name }}
+        </a>
+        
+        <h1 style="margin: 0; color: #333; font-size: 2rem;">📅 {{ month_name }}</h1>
+        
+        <a href="/calendar?year={{ next_year }}&month={{ next_month }}" class="btn" style="background: #2196F3; color: white; text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 6px; font-weight: bold;">
+            {{ next_month_name }} →
+        </a>
+    </div>
+
+    <!-- Calendar Legend - Better positioning -->
+    <div style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+        <div style="display: flex; align-items: center;">
+            <div style="width: 16px; height: 16px; background: #ff4444; border-radius: 3px; margin-right: 0.5rem;"></div>
+            <small style="font-weight: bold;">High Priority</small>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 16px; height: 16px; background: #ffaa00; border-radius: 3px; margin-right: 0.5rem;"></div>
+            <small style="font-weight: bold;">Medium Priority</small>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 16px; height: 16px; background: #44ff44; border-radius: 3px; margin-right: 0.5rem;"></div>
+            <small style="font-weight: bold;">Low Priority</small>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="width: 16px; height: 16px; background: #ff0000; border: 2px solid #ff0000; border-radius: 3px; margin-right: 0.5rem;"></div>
+            <small style="font-weight: bold;">Overdue</small>
+        </div>
+    </div>
+
+    <!-- Calendar Grid - Better spacing and sizing -->
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <!-- Weekday Headers - Better styling -->
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 0.8rem; text-align: center; font-weight: bold; background: #f0f2f5; padding: 0.8rem; border-radius: 6px;">
+            <div style="color: #666;">Monday</div>
+            <div style="color: #666;">Tuesday</div>
+            <div style="color: #666;">Wednesday</div>
+            <div style="color: #666;">Thursday</div>
+            <div style="color: #666;">Friday</div>
+            <div style="color: #999;">Saturday</div>
+            <div style="color: #999;">Sunday</div>
+        </div>
+
+        <!-- Calendar Days - Better spacing -->
+        {% for week in month_days %}
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 2px;">
+            {% for day in week %}
+            <div style="min-height: 120px; border: 1px solid #e8ecef; padding: 0.8rem; position: relative; background: {% if day == 0 %}#fafbfc{% else %}white{% endif %}; transition: all 0.2s ease;"
+                 onmouseover="this.style.background='{% if day == 0 %}#f5f6f8{% else %}#f8f9fa{% endif %}'" 
+                 onmouseout="this.style.background='{% if day == 0 %}#fafbfc{% else %}white{% endif %}'">
+                {% if day != 0 %}
+                    <!-- Day Number - Better styling -->
+                    <div style="font-weight: bold; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem;">
+                        <span style="color: #333;">{{ day }}</span>
+                        {% set date_str = '%04d-%02d-%02d'|format(year, month, day) %}
+                        <a href="/calendar/day/{{ date_str }}" style="text-decoration: none; color: #2196F3; font-size: 1rem; padding: 0.3rem;" title="View day details">🔍</a>
+                    </div>
+                    
+                    <!-- Tasks for this day -->
+                    {% set date_str = '%04d-%02d-%02d'|format(year, month, day) %}
+                    {% if date_str in tasks_by_date %}
+                        <div style="max-height: 70px; overflow-y: auto;">
+                            {% for task in tasks_by_date[date_str] %}
+                            {% set urgency_class = get_urgency_class(task.due_date) %}
+                           <div style="font-size: 0.75rem; margin-bottom: 0.3rem; padding: 0.2rem 0.4rem; border-radius: 4px; 
+          background: {% if task.priority == 'high' %}#ff4444
+                     {% elif task.priority == 'medium' %}#ffaa00
+                     {% elif task.priority == 'low' %}#44ff44
+                     {% else %}#666666{% endif %};
+          color: {% if task.priority == 'low' %}black{% else %}white{% endif %}; 
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+          {% if urgency_class == 'urgent-overdue' %}border: 2px solid #ff0000; box-shadow: 0 1px 3px rgba(255,0,0,0.3);{% endif %}
+          cursor: pointer;"
+          onclick="window.location.href='/task_details/{{ task.id }}'"
+          title="{{ task.title }} - {{ task.priority }} priority">
+    {{ task.title }}
+</div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div style="color: #999; font-size: 0.8rem; text-align: center; margin-top: 1rem;">
+                            No tasks
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Today indicator - Better visibility -->
+                    {% set today = datetime.now() %}
+                    {% if day == today.day and month == today.month and year == today.year %}
+                    <div style="position: absolute; top: 4px; right: 4px; background: linear-gradient(135deg, #2196F3, #21CBF3); color: white; border-radius: 12px; padding: 0.2rem 0.6rem; font-size: 0.7rem; font-weight: bold; box-shadow: 0 2px 4px rgba(33, 150, 243, 0.3);">
+                        Today
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <div style="color: #ccc; text-align: center; font-size: 0.8rem; margin-top: 2rem;">
+                        –
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Quick Stats - Better spacing -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+        <div style="background: linear-gradient(135deg, #e8f5e8, #c8e6c9); padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #2e7d32;">📅 This Month</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0; color: #1b5e20;">
+                {{ days_with_tasks }}
+            </p>
+            <small style="color: #4caf50;">Days with tasks due</small>
+        </div>
+        <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #1565c0;">⏰ Total Tasks</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0; color: #0d47a1;">
+                {{ total_tasks_this_month }}
+            </p>
+            <small style="color: #2196f3;">Due this month</small>
+        </div>
+        <div style="background: linear-gradient(135deg, #fff3e0, #ffccbc); padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h3 style="margin: 0 0 1rem 0; color: #ef6c00;">🚨 Overdue</h3>
+            <p style="font-size: 2rem; font-weight: bold; margin: 0; color: #e65100;">
+                {{ overdue_count }}
+            </p>
+            <small style="color: #ff9800;">Past due tasks</small>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Additional styling for better appearance */
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: all 0.2s ease;
+    }
+    
+    /* Scrollbar styling for task lists */
+    div::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    div::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 2px;
+    }
+    
+    div::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 2px;
+    }
+    
+    div::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>
+{% endblock %}

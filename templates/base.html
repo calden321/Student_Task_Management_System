@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Task Manager</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8f5e8 100%);
+            min-height: 100vh;
+        }
+
+        /* Main content container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Slim Creative Header Design */
+        .header { 
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white; 
+            padding: 0;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            box-shadow: 0 2px 15px rgba(76, 175, 80, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle shimmer effect */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Compact title design */
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            background: linear-gradient(45deg, #ffffff, #e8f5e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        
+        /* Slim welcome message */
+        .welcome-message {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 0.8rem;
+        }
+        
+        /* Compact navigation design */
+        .main-nav {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.5rem 0.9rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            text-decoration: none;
+        }
+        
+        /* Smaller academic icons */
+        .academic-icons {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            gap: 0.4rem;
+            opacity: 0.6;
+        }
+        
+        .academic-icon {
+            font-size: 1.2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .academic-icon:nth-child(2) { animation-delay: 0.5s; }
+        .academic-icon:nth-child(3) { animation-delay: 1s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        /* Compact auth links */
+        .auth-links {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        
+        .auth-link {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 0.4rem 1.2rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .auth-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        /* Responsive design for slim header */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-content {
+                padding: 0.8rem 15px;
+            }
+            
+            .main-nav {
+                gap: 0.3rem;
+            }
+            
+            .nav-card {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.85rem;
+            }
+            
+            .academic-icons {
+                position: relative;
+                top: 0;
+                right: 0;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+            
+            .auth-links {
+                justify-content: center;
+            }
+        }
+
+        /* Keep all your existing functional styles below */
+        .container { 
+            display: grid; 
+            grid-template-columns: 1fr 300px; 
+            gap: 2rem; 
+        }
+        
+        .task-list { 
+            background: white; 
+            padding: 1rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+        
+        .task-form { 
+            background: white; 
+            padding: 1rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+        
+        .task-item { 
+            border-left: 4px solid #ccc; 
+            padding: 1rem; 
+            margin: 1rem 0; 
+            background: #fafafa; 
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+        
+        .task-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .task-item.high { 
+            border-left-color: #ff4444; 
+        }
+        
+        .task-item.medium { 
+            border-left-color: #ffaa00; 
+        }
+        
+        .task-item.low { 
+            border-left-color: #44ff44; 
+        }
+        
+        .task-item.urgent-overdue {
+            border-left-color: #ff0000 !important;
+            background: #ffe6e6;
+        }
+        
+        .task-item.urgent-today {
+            border-left-color: #ff9900 !important;
+            background: #fff0e6;
+        }
+        
+        .task-item.urgent-tomorrow {
+            border-left-color: #ffcc00 !important;
+            background: #fff9e6;
+        }
+        
+        .task-item.completed { 
+            opacity: 0.6; 
+            background: #e0e0e0; 
+        }
+        
+        .btn { 
+            padding: 0.7rem 1.5rem; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 0.2rem; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, #4CAF50, #45a049); 
+            color: white; 
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .btn-danger { 
+            background: #ff4444; 
+            color: white; 
+        }
+        
+        .btn-success { 
+            background: #44ff44; 
+            color: black; 
+        }
+        
+        form { 
+            margin: 1rem 0; 
+        }
+        
+        input, textarea, select { 
+            width: 100%; 
+            padding: 0.8rem; 
+            margin: 0.5rem 0; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 1rem;
+        }
+        
+        .stats { 
+            background: white; 
+            padding: 1.5rem; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            margin-bottom: 1rem; 
+        }
+        
+        .priority-badge { 
+            padding: 0.3rem 0.8rem; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            color: white; 
+            font-weight: 600;
+        }
+        
+        .high-badge { 
+            background: #ff4444; 
+        }
+        
+        .medium-badge { 
+            background: #ffaa00; 
+        }
+        
+        .low-badge { 
+            background: #44ff44; 
+            color: black; 
+        }
+        
+        .urgency-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+            margin-left: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .overdue-badge {
+            background: #ff0000;
+        }
+        
+        .today-badge {
+            background: #ff9900;
+        }
+        
+        .tomorrow-badge {
+            background: #ffcc00;
+            color: black;
+        }
+        
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .highlight {
+            background-color: #ffff88;
+            padding: 0.1rem 0.2rem;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Slim Creative Header -->
+    <div class="header">
+        <div class="header-content">
+            <!-- Subtle Academic Icons -->
+            <div class="academic-icons">
+                <div class="academic-icon">📚</div>
+                <div class="academic-icon">🎓</div>
+                <div class="academic-icon">✏️</div>
+            </div>
+            
+            <h1> TaskWise</h1>
+            
+            {% if session.username %}
+                <div class="welcome-message">
+                    Welcome back, <strong>{{ session.username }}</strong>!
+                </div>
+                
+                <!-- Compact Navigation Cards -->
+                <nav class="main-nav">
+                    <a href="/dashboard" class="nav-card">📋 Tasks</a>
+                    <a href="/calendar" class="nav-card">📅 Calendar</a>
+                    <a href="/study_timer" class="nav-card">⏱️ Timer</a>
+                    <a href="/chatbot" class="nav-card">🤖 Assistant</a>
+                    <a href="/study_stats" class="nav-card">📈 Stats</a>
+                    <a href="/logout" class="nav-card" style="background: rgba(255,255,255,0.25);">🚪 Logout</a>
+                </nav>
+            {% else %}
+                <div class="welcome-message">
+                    Organize your academic life with smart task management
+                </div>
+                
+                <!-- Compact Auth Links -->
+                <div class="auth-links">
+                    <a href="/login" class="auth-link">📝 Login</a>
+                    <a href="/register" class="auth-link">🎯 Get Started</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Main content area -->
+    <div class="main-container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
